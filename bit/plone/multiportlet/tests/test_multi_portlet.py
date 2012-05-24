@@ -1,5 +1,3 @@
-import unittest
-
 from zope.component import getUtility, getMultiAdapter
 from zope.site.hooks import setHooks, setSite
 
@@ -11,8 +9,6 @@ from plone.portlets.interfaces import IPortletAssignment
 from plone.portlets.interfaces import IPortletDataProvider
 from plone.portlets.interfaces import IPortletRenderer
 from plone.portlets.interfaces import IPortletAssignmentSettings
-
-from DateTime import DateTime
 
 from plone.testing import layered
 from plone.app.portlets.tests.base import PortletsTestCase
@@ -30,6 +26,7 @@ def _add_portlet(mapping, name, data=None):
     else:
         addview()
 
+
 class MultiPortletTestCase(PortletsTestCase):
     _column = 'plone.leftcolumn'
 
@@ -38,7 +35,7 @@ class MultiPortletTestCase(PortletsTestCase):
     def afterSetUp(self):
         setHooks()
         setSite(self.portal)
-    
+
     def add_some_portlets(self, context):
         mapping = context.restrictedTraverse(
             '++contextportlets++%s' % self._column)
@@ -54,14 +51,18 @@ class MultiPortletTestCase(PortletsTestCase):
             {}
             )
         return mapping
-        
-    def renderer(self, context=None, request=None, view=None, manager=None, assignment=None):
+
+    def renderer(self, context=None, request=None,
+                 view=None, manager=None, assignment=None):
         context = context or self.folder
         request = request or self.folder.REQUEST
         view = view or self.folder.restrictedTraverse('@@plone')
-        manager = manager or getUtility(IPortletManager, name=self._column, context=self.portal)
+        manager = manager or getUtility(
+            IPortletManager, name=self._column, context=self.portal)
         assignment = assignment or portlet_multi_portlet.Assignment({})
-        return getMultiAdapter((context, request, view, manager, assignment), IPortletRenderer)
+        return getMultiAdapter(
+            (context, request, view, manager, assignment), IPortletRenderer)
+
 
 class TestPortlet(MultiPortletTestCase):
 
@@ -88,7 +89,8 @@ class TestPortlet(MultiPortletTestCase):
         self.failUnless(IPortletDataProvider.providedBy(portlet.data))
 
     def testInvokeAddview(self):
-        mapping = self.portal.restrictedTraverse('++contextportlets++plone.leftcolumn')
+        mapping = self.portal.restrictedTraverse(
+            '++contextportlets++plone.leftcolumn')
         for m in mapping.keys():
             del mapping[m]
         _add_portlet(mapping,
@@ -96,11 +98,13 @@ class TestPortlet(MultiPortletTestCase):
                      dict(portlets=[])
                      )
         self.assertEquals(len(mapping), 1)
-        self.failUnless(isinstance(mapping.values()[0],
-                                   portlet_multi_portlet.Assignment))
+        self.failUnless(
+            isinstance(mapping.values()[0],
+                       portlet_multi_portlet.Assignment))
 
     def test_portlet_type(self):
-        mapping = self.portal.restrictedTraverse('++contextportlets++plone.leftcolumn')
+        mapping = self.portal.restrictedTraverse(
+            '++contextportlets++plone.leftcolumn')
         for m in mapping.keys():
             del mapping[m]
         _add_portlet(mapping,
@@ -116,22 +120,27 @@ class TestPortlet(MultiPortletTestCase):
             mapping,
             'portlets.MultiPortlet',
             dict(portlets=['calendar'])
-            )        
+            )
         self.assertEquals(
-            IPortletAssignmentSettings(mapping['calendar']).get('visible', True),
+            IPortletAssignmentSettings(
+                mapping['calendar']).get('visible', True),
             False)
         self.assertEquals(
-            IPortletAssignmentSettings(mapping['events']).get('visible', True),
+            IPortletAssignmentSettings(
+                mapping['events']).get('visible', True),
             True)
 
     def testRenderer(self):
         context = self.folder
         request = self.folder.REQUEST
         view = self.folder.restrictedTraverse('@@plone')
-        manager = getUtility(IPortletManager, name='plone.rightcolumn', context=self.portal)
+        manager = getUtility(
+            IPortletManager, name='plone.rightcolumn', context=self.portal)
         assignment = portlet_multi_portlet.Assignment({})
-        renderer = getMultiAdapter((context, request, view, manager, assignment), IPortletRenderer)
-        self.failUnless(isinstance(renderer, portlet_multi_portlet.Renderer))
+        renderer = getMultiAdapter(
+            (context, request, view, manager, assignment), IPortletRenderer)
+        self.failUnless(
+            isinstance(renderer, portlet_multi_portlet.Renderer))
 
 
 class TestRenderer(MultiPortletTestCase):
@@ -143,7 +152,7 @@ class TestRenderer(MultiPortletTestCase):
             mapping,
             'portlets.MultiPortlet',
             dict(portlets=[])
-            )        
+            )
         renderer = self.renderer(
             self.folder,
             assignment=mapping['multi-portlet'])
@@ -157,7 +166,7 @@ class TestRenderer(MultiPortletTestCase):
             mapping,
             'portlets.MultiPortlet',
             dict(portlets=['calendar'])
-            )        
+            )
         renderer = self.renderer(
             self.folder, assignment=mapping['multi-portlet'])
         html = renderer.render()

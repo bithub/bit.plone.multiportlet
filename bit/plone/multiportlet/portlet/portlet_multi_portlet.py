@@ -1,4 +1,9 @@
 import sys
+import logging
+
+from ZODB.POSException import ConflictError
+
+from Acquisition import aq_acquire
 
 from zope.interface import implements
 from zope.component import getMultiAdapter
@@ -11,11 +16,13 @@ from plone.portlets.utils import hashPortletInfo
 from plone.app.portlets.portlets import base
 
 from plone.portlets.interfaces\
-    import IPortletAssignmentSettings, IPortletRetriever,\
+    import IPortletAssignmentSettings,\
     IPortletAssignmentMapping, IPortletRenderer
 
 from bit.plone.multiportlet.interfaces import\
     IMultiPortlet, IMultiPortletRenderer
+
+logger = logging.getLogger('bit.plone.mp')
 
 
 class Assignment(base.Assignment):
@@ -23,7 +30,7 @@ class Assignment(base.Assignment):
     title = u'Multi Portlet'
 
     def __init__(self, data):
-        super(base.Assignment, self).__init__(data)
+        super(base.Assignment, self).__init__()
         self.portlets = data.get('portlets', {})
         self.portlet_type = data.get('portlet_type', 'simple')
 
@@ -62,13 +69,13 @@ class Renderer(base.Renderer):
                 renderer = getMultiAdapter(
                     (self.context, self.request,
                      self.view, self.manager, mapping[portlet]),
-                    IPortletRenderer)                
-                hash=hashPortletInfo(
+                    IPortletRenderer)
+                hash = hashPortletInfo(
                     dict(manager=self.manager.__name__,
                          category=mapping.__category__,
                          key='/'.join(self.context.getPhysicalPath()),
                          name=mapping[portlet].__name__))
-                yield dict(id=portlet,
+                yield dict(id=mapping[portlet].title,
                            renderer=renderer,
                            hash=hash)
 
@@ -81,7 +88,6 @@ class Renderer(base.Renderer):
             logger.exception('Error while rendering %r' % self)
             aq_acquire(self, 'error_log').raising(sys.exc_info())
             return self.error_message()
-
 
     def get_id(self):
         return ''
@@ -101,9 +107,6 @@ class AddForm(base.AddForm):
     label = u"Add multi-portlet"
     description = "A portlet containing other portlets."
 
-    def __call__(self, data):
-        return super(base.AddForm, self).__call__()
-
     def create(self, data):
         for portletid in data.get('portlets', []):
             portlet = self.__parent__.get(portletid, None)
@@ -117,9 +120,6 @@ class EditForm(base.EditForm):
     form_fields = form.Fields(IMultiPortlet)
     label = u"Edit multi-portlet"
     description = "A portlet containing other portlets."
-
-    def __call__(self):
-        return super(base.EditForm, self).__call__()
 
     @form.action(u"Save",
                  condition=form.haveInputWidgets,
