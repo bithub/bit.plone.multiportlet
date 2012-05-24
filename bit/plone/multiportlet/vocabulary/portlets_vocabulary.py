@@ -49,6 +49,7 @@ class MultiPortletTypeVocabulary(object):
         multi_types = dict(simple='Simple',
                            tabbed='Tabbed',
                            accordion='Accordion',
+                           floated='Floated',
                            )        
         return SimpleVocabulary(
             [SimpleTerm(value=k, token=base64.b64encode(k), title=v)

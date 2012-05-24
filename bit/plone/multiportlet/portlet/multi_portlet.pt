@@ -6,7 +6,9 @@
     <div tal:attributes="id view/get_id;
 			class view/get_class;">
       <tal:loop repeat="portlet view/portlets">
-	<div tal:replace="structure python:portlet[1]" />
+	<div tal:attributes="id string:portletwrapper-${portlet/hash};
+				   class string:portletWrapper kssattr-portlethash-${portlet/hash};"
+	     tal:content="structure python:view.safe_render(portlet['renderer'])" />
       </tal:loop>
     </div>
     <div class="visualClear"><!--is that clear?--></div>

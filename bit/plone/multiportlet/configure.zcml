@@ -9,18 +9,11 @@
 
   <include package=".portlet" />
   <include file="./profiles.zcml" />
-
   <include package=".vocabulary" />
-      
-  <adapter
-      factory=".multi_portlet_edit.MultiPortletEditManagerRenderer"
-      provides="plone.portlets.interfaces.IPortletManagerRenderer"
-      />
 
-  <adapter 
-      factory=".multi_portlet_retriever.MultiPortletManagerRenderer"
-      provides="plone.portlets.interfaces.IPortletManagerRenderer"
+  <browser:resource
+      name="bit-plone-multiportlet.js"
+      file="js/multiportlet.js"
       />
-
 
 </configure>

@@ -24,8 +24,8 @@ class Assignment(base.Assignment):
 
     def __init__(self, data):
         super(base.Assignment, self).__init__(data)
-        self.portlets = data['portlets']
-        self.portlet_type = data['portlet_type']
+        self.portlets = data.get('portlets', {})
+        self.portlet_type = data.get('portlet_type', 'simple')
 
 
 class Renderer(base.Renderer):
@@ -35,6 +35,8 @@ class Renderer(base.Renderer):
     def _template(self):
         if self.data.portlet_type == 'tabbed':
             return ViewPageTemplateFile('tabbed_multi_portlet.pt')
+        if self.data.portlet_type == 'floated':
+            return ViewPageTemplateFile('floated_multi_portlet.pt')
         return ViewPageTemplateFile('multi_portlet.pt')
 
     def __init__(self, context, request, view, manager, data):
@@ -99,8 +101,11 @@ class AddForm(base.AddForm):
     label = u"Add multi-portlet"
     description = "A portlet containing other portlets."
 
+    def __call__(self, data):
+        return super(base.AddForm, self).__call__()
+
     def create(self, data):
-        for portletid in data['portlets']:
+        for portletid in data.get('portlets', []):
             portlet = self.__parent__.get(portletid, None)
             if portlet:
                 settings = IPortletAssignmentSettings(portlet)
