@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<portlets>
+ <portlet 
+   addview="portlets.MultiPortlet"
+   title="Multi-portlet"
+   description="A portlet that can contain other portlets."
+   >
+   <for interface="plone.app.portlets.interfaces.IColumn" />
+   <for interface="plone.app.portlets.interfaces.IDashboard" />
+ </portlet>
+  <portletmanager 
+     name="bit.plone.multiportlet" 
+     type="bit.plone.multiportlet.interfaces.IContainedPortlets"
+     />
+</portlets>

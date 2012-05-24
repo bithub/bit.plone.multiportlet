@@ -1,0 +1,11 @@
+<tal:if condition="python: len(options['portlets'])">
+<tal:block
+    repeat="portlet options/portlets">
+<div tal:attributes="class string:atom kssattr-atom-${portlet/hash}" >
+  <div tal:attributes="id string:portletwrapper-${portlet/hash};
+		       class string:portletWrapper kssattr-portlethash-${portlet/hash};"
+       tal:content="structure python:view.safe_render(portlet['renderer'])" />
+  <div class="visualClear"><!-- clear --></div>
+</div>
+</tal:block>
+</tal:if>

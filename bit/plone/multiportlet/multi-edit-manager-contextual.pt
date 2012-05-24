@@ -1,0 +1,15 @@
+<div class="portlets-manager" 
+     tal:attributes="id string:portletmanager-${view/normalized_manager_name};"
+     i18n:domain="plone">
+
+    <div class="atoms">
+      <div class="inner">
+	<h3 tal:content="python:view.normalized_manager_name().replace( 'fraglets-', '')" />
+	<div metal:use-macro="context/@@manage-portlets-macros/macros/portlet-add-form" />
+	<div style="padding: 1em;">
+	  <div metal:use-macro="context/@@manage-portlets-macros/macros/current-portlets-list" />
+	</div>
+	<div class="visualClear"><!-- clear --></div>
+      </div>
+    </div>      
+</div>

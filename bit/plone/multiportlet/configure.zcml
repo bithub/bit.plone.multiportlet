@@ -1,0 +1,26 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:browser="http://namespaces.zope.org/browser"
+	   xmlns:cmf="http://namespaces.zope.org/cmf"	
+	   xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+	   xmlns:zcml="http://namespaces.zope.org/zcml"
+	   i18n_domain='bit.plone.multiportlet'
+	   >
+
+  <include package=".portlet" />
+  <include file="./profiles.zcml" />
+
+  <include package=".vocabulary" />
+      
+  <adapter
+      factory=".multi_portlet_edit.MultiPortletEditManagerRenderer"
+      provides="plone.portlets.interfaces.IPortletManagerRenderer"
+      />
+
+  <adapter 
+      factory=".multi_portlet_retriever.MultiPortletManagerRenderer"
+      provides="plone.portlets.interfaces.IPortletManagerRenderer"
+      />
+
+
+</configure>

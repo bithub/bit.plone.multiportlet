@@ -1,0 +1,25 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+	   xmlns:metal="http://xml.zope.org/namespaces/metal"
+	   i18n:domain="plone">
+  <tal:is condition="view/showPortlet">
+    <div tal:attributes="id view/get_id;
+			 class view/get_class;">
+      <dl class="enableFormTabbing">
+	<tal:loop repeat="portlet view/portlets">
+
+	  <tal:is define="portletid python:portlet['id']">
+	    <dt tal:attributes="id python:'fieldsetlegend-%s' % portletid"
+		tal:content="portletid" />
+	    <dd tal:attributes="id python:'fieldset-%s' % portletid">
+	      <div tal:attributes="id string:portletwrapper-${portlet/hash};
+				   class string:portletWrapper kssattr-portlethash-${portlet/hash};"
+		   tal:content="structure python:view.safe_render(portlet['renderer'])" />
+	      <div class="visualClear"><!-- clear --></div>
+	    </dd>
+	  </tal:is>
+	</tal:loop>
+      </dl>
+    </div>
+    <div class="visualClear"><!--is that clear?--></div>
+  </tal:is>
+</tal:block>
